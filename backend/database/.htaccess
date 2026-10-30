@@ -1,0 +1,2 @@
+# Block direct browser access to database export files.
+Require all denied

@@ -1,0 +1,5 @@
+# Basic project hardening.
+Options -Indexes
+<FilesMatch "(^\.env|composer\.(json|lock)|README|README_INSTALL\.txt)$">
+    Require all denied
+</FilesMatch>

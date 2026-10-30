@@ -1,0 +1,129 @@
+CAR SALES SYSTEM - BUSINESS EXTENSION
+=====================================
+
+This build keeps the original car sales system and adds only workflows directly related to selling vehicles.
+
+ADDED / EXPANDED MODULES
+------------------------
+1. Customer CRM
+   - Buyer/seller customer records
+   - Contact details, source and notes
+   - Purchase history and outstanding balance history
+
+2. Sales Leads / Follow-up Pipeline
+   - Interested vehicle
+   - Budget range
+   - Source (walk-in, WhatsApp, social media, referral, dalali, etc.)
+   - Follow-up date
+   - Stages: New, Contacted, Follow-up, Negotiating, Won, Lost
+
+3. Dalali / Sales Agent Management
+   - Dalali contact records (not internal system users)
+   - Fixed or percentage commission terms
+   - Referral history
+   - Commission linked to actual sales
+   - Pending/Paid commission status
+   - Dalali commission payment method/reference and paid-by record
+   - Printable dalali statement and commission payment receipt
+   - Dalali have NO system login/access by default
+
+4. Reservations & Deposits
+   - Reserve an in-stock vehicle for a customer
+   - Record deposit, expiry and conditions
+   - Reserved vehicle indicator in stock list
+   - Reservation deposit carries into final sale automatically
+
+5. Sales Register & Payment Collection
+   - Full, partial or unpaid sales
+   - Multiple payments per sale
+   - Cash, bank transfer, mobile money, cheque or other methods
+   - Payment reference numbers
+   - Outstanding balances
+   - Printable branded customer sale receipt/statement
+   - Printable branded vehicle sale agreement
+
+6. Sale Correction / Void Control
+   - Incorrect sales can be voided by an administrator
+   - A void reason is mandatory
+   - Original sale, payment and commission data are archived before removal from the active sale register
+   - Vehicle is returned to stock after a valid void
+   - Audit trail records who performed the action and when
+
+7. Activity / Audit Log
+   - Records important creation, update, payment, import and void actions
+   - Supports accountability when several staff members use the system
+   - Includes a view of archived voided sales
+
+8. Test Drive Register
+   - Customer and vehicle
+   - Date/time
+   - Driving licence reference
+   - Outcome tracking
+
+9. Vehicle Document Checklist
+   - Logbook/registration
+   - Customs/import documents
+   - Road licence
+   - Inspection
+   - Insurance
+   - Ownership transfer
+   - Purchase agreement
+   - Available/Pending/Missing status
+
+10. Expanded Vehicle Inventory Details
+   - Make/model/year/color
+   - Mileage
+   - Transmission/fuel
+   - Engine number
+   - Asking price
+   - Owned/consignment/trade-in stock type
+   - Supplier/owner contacts
+   - Yard/branch location
+   - Plate/registration number is OPTIONAL for newly imported or unregistered vehicles
+   - Chassis number remains the main required vehicle identifier
+
+11. Company Settings & Branding
+   - Showroom/company name and logo
+   - Address, phone and email
+   - TIN / registration details
+   - Currency and standard sale terms
+   - Branding is reused on customer receipts, sale agreements and dalali payment receipts
+
+12. Excel / CSV Migration & Import Centre
+   - Import Cars / stock
+   - Import Customers
+   - Import Dalali
+   - Import Sales Leads
+   - Import Vehicle Documents
+   - Import Vehicle Costs
+   - Import Historical Sales
+   - Downloadable .xlsx templates included for every import type
+   - Imported rows become normal linked system records, not stored spreadsheet attachments
+   - Vehicle-related rows are linked using chassis number, so plate number is not required
+   - Row-level validation reports skipped rows without discarding valid rows
+   - Import batch history is retained
+   - Supports .xlsx and .csv; old .xls files should be saved as .xlsx first
+
+13. Business Reports
+   - Existing reports preserved
+   - Outstanding customer balances
+   - Dalali commission report
+   - Sales lead pipeline report
+   - Existing profit logic continues to include dalali commission as a vehicle selling cost
+
+14. Dashboard Extension
+   - Existing stock/capital/profit cards preserved
+   - Active leads
+   - Active reservations
+   - Customer receivables
+   - Pending dalali commissions
+
+IMPORTANT DATABASE BEHAVIOUR
+----------------------------
+The system upgrades the existing database non-destructively from includes/db.php using backend/includes/business_schema.php.
+Existing users, cars, costs, sales, backups and reports are not deleted.
+Existing vehicle plate numbers remain; the column is made nullable so newly imported/unregistered vehicles can be entered without a plate.
+Old sales are migrated as paid one time so historical data does not incorrectly appear as customer debt.
+New sales can be fully paid, partial or unpaid.
+Dalali commission is also recorded as a car cost so the original profit calculation remains financially meaningful.
+Company settings, audit history, voided-sale archives and import history are added alongside the existing data.

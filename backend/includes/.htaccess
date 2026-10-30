@@ -1,0 +1,4 @@
+# Allow frontend assets inside this folder but block direct access to internal PHP files.
+<FilesMatch "\.(php|inc|env|sql|bak|log)$">
+    Require all denied
+</FilesMatch>

@@ -1,0 +1,34 @@
+Car Sales System - Security Changes Added
+
+This secured copy keeps the original working pages and business flow, but adds protection around them.
+
+Main security file:
+- backend/includes/security.php
+
+Security features added:
+1. Secure PHP session cookie settings: HttpOnly, SameSite=Lax, Secure when HTTPS is used, strict session mode.
+2. Session regeneration remains active after login, and LAST_ACTIVITY is stored.
+3. Idle timeout: default 30 minutes. Change CAR_SALES_IDLE_TIMEOUT in backend/includes/security.php.
+4. CSRF protection for POST forms, with automatic hidden token injection.
+5. GET action token protection for risky links such as user status toggle and backup download.
+6. Login rate limiting: 5 failed attempts, then 15-minute lock.
+7. Password reset/change-password rate limiting.
+8. Direct URL permission protection by route.
+9. Admin-only reports, backups, and user management.
+10. Backup creation and download hourly limits.
+11. Browser security headers.
+12. .htaccess protection for database, backups, and internal include PHP files.
+13. Old generated SQL backup files and .git folder were removed from this final delivery package.
+
+Important files:
+- backend/includes/security.php: central security logic.
+- backend/includes/functions.php: loads the security file.
+- backend/includes/auth.php: connects old require_login()/require_admin() to the new security functions.
+- backend/authentication/login.php: login + rate limiting + session regeneration.
+- backend/backup/index.php and backend/backup/download.php: admin-only backup actions.
+- backend/users/manage.php and backend/users/toggle.php: protected user status toggle.
+
+Before customer delivery:
+- Import backend/database/database.sql into MySQL.
+- Test login, dashboard, cars, costs, sale, reports, users, backup.
+- Use HTTPS on real hosting.

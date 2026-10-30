@@ -1,0 +1,2 @@
+# Block direct browser access to generated SQL backups.
+Require all denied

@@ -1,0 +1,10 @@
+# Database backups contain customer data and are never committed
+backend/backups/*
+!backend/backups/.htaccess
+!backend/backups/.keep
+# Uploaded company files
+backend/uploads/company/*
+!backend/uploads/company/.htaccess
+*.log
+.env
+.DS_Store

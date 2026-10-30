@@ -1,0 +1,23 @@
+<?php
+require_once __DIR__.'/../../includes/db.php';
+require_once __DIR__.'/../includes/auth.php';
+require_once __DIR__.'/../includes/business_helpers.php';
+require_login();$id=(int)($_GET['id']??0);
+$st=$conn->prepare('SELECT s.*,c.car_name,c.plate_number,c.chassis_number,c.engine_number,c.make,c.model,c.model_year,c.color,c.mileage,c.stock_type,cu.national_id buyer_national_id,cu.address buyer_address FROM car_sales s JOIN cars c ON c.id=s.car_id LEFT JOIN customers cu ON cu.id=s.customer_id WHERE s.id=?');
+$st->bind_param('i',$id);$st->execute();$s=$st->get_result()->fetch_assoc();if(!$s){set_flash('error','Sale not found.');redirect_to('backend/sales/index.php');}
+$paid=sale_paid_total($conn,$id);$balance=max(0,(float)$s['sale_price']-$paid);$company=car_sales_company_settings($conn);
+$page_title='Sale Agreement';include __DIR__.'/../includes/header.php';include __DIR__.'/../includes/leftsidebar.php';
+?>
+<div class="content-page"><div class="report-title no-print"><div><h1 class="page-title">Vehicle Sale Agreement</h1><p class="muted">Generated from Sale #<?=str_pad((string)$s['id'],6,'0',STR_PAD_LEFT)?></p></div><div><button class="btn" onclick="window.print()">Print Agreement</button><a class="btn btn-dark" href="index.php">Back</a></div></div>
+<div class="card print-sheet">
+<div style="text-align:center;margin-bottom:20px"><?php if(!empty($company['logo_path'])):?><img src="<?=e(app_url($company['logo_path']))?>" style="max-height:75px;max-width:220px;object-fit:contain" alt="Logo"><?php endif;?><h1 style="margin:8px 0 4px"><?=e($company['company_name'])?></h1><?php if($company['tagline']):?><div><?=e($company['tagline'])?></div><?php endif;?><div><?=e($company['address']?:'')?> <?=e($company['phone']?' | '.$company['phone']:'')?> <?=e($company['email']?' | '.$company['email']:'')?></div><?php if($company['tin_number']||$company['registration_number']):?><small>TIN: <?=e($company['tin_number']?:'—')?> &nbsp; Registration: <?=e($company['registration_number']?:'—')?></small><?php endif;?></div>
+<hr><h2 style="text-align:center">VEHICLE SALE AGREEMENT</h2><p>This agreement records the vehicle sale made on <strong><?=e($s['sale_date'])?></strong> under Sale #<?=str_pad((string)$s['id'],6,'0',STR_PAD_LEFT)?>.</p>
+<h3>1. Seller</h3><p><strong><?=e($company['company_name'])?></strong><br><?=e($company['address']?:'Address not specified')?><br><?=e($company['phone']?:'')?></p>
+<h3>2. Buyer</h3><table class="table"><tr><th>Name</th><td><?=e($s['buyer_name'])?></td><th>Phone</th><td><?=e($s['buyer_phone']?:'—')?></td></tr><tr><th>Email</th><td><?=e($s['buyer_email']?:'—')?></td><th>ID / NIDA / Passport</th><td><?=e($s['buyer_national_id']?:'—')?></td></tr><tr><th>Address</th><td colspan="3"><?=e($s['buyer_address']?:'—')?></td></tr></table>
+<h3>3. Vehicle</h3><table class="table"><tr><th>Vehicle</th><td><?=e($s['car_name'])?></td><th>Registration</th><td><?=e(car_sales_plate_label($s['plate_number']))?></td></tr><tr><th>Chassis Number</th><td><?=e($s['chassis_number'])?></td><th>Engine Number</th><td><?=e($s['engine_number']?:'—')?></td></tr><tr><th>Make / Model</th><td><?=e(trim(($s['make']??'').' '.($s['model']??''))?:'—')?></td><th>Model Year</th><td><?=e($s['model_year']?:'—')?></td></tr><tr><th>Color</th><td><?=e($s['color']?:'—')?></td><th>Mileage</th><td><?=e($s['mileage']!==null?$s['mileage'].' km':'—')?></td></tr></table>
+<h3>4. Financial Agreement</h3><table class="table"><tr><th>Agreed Sale Price</th><td><?=e($company['currency'])?> <?=money($s['sale_price'])?></td></tr><tr><th>Total Paid</th><td><?=e($company['currency'])?> <?=money($paid)?></td></tr><tr><th>Outstanding Balance</th><td><?=e($company['currency'])?> <?=money($balance)?></td></tr><tr><th>Payment Status</th><td><?=e($s['payment_status'])?></td></tr></table>
+<h3>5. Terms</h3><p style="white-space:pre-line"><?=e($company['sale_terms']?:'The parties confirm the vehicle, price and payment information recorded above.')?></p><?php if($s['notes']):?><p><strong>Sale Notes:</strong> <?=e($s['notes'])?></p><?php endif;?>
+<div style="margin-top:70px;display:grid;grid-template-columns:1fr 1fr;gap:60px"><div>____________________________<br><strong>Seller / Authorized Representative</strong><br>Name: ______________________<br>Date: _______________________</div><div>____________________________<br><strong>Buyer</strong><br>Name: <?=e($s['buyer_name'])?><br>Date: _______________________</div></div>
+<div style="margin-top:50px">____________________________<br><strong>Witness</strong><br>Name: ______________________ &nbsp;&nbsp; ID: ______________________</div>
+</div></div>
+<?php include __DIR__.'/../includes/footer.php';?>
